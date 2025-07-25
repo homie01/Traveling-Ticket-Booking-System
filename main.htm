@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Travel Booking Website</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <section id="userProfile" class="profile-section">
+      <h2>Welcome, <span id="displayName"></span>!</h2>
+      <button id="logoutBtn">Logout</button>
+    </section>
+
+    <header>
+      <h1>Explore The World</h1>
+      <nav class="main-nav">
+        <a href="#packages">Packages</a>
+        <a href="booking.htm">Booking Details</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h2>Your Adventure Begins Here</h2>
+      <p>Find your next destination and travel with ease.</p>
+      <a href="book.htm" class="btn">Book a Trip</a>
+    </section>
+
+    <section id="packages" class="packages">
+      <h2>Popular Packages</h2>
+      <div class="package-list">
+        <div class="card">
+          <img src="Paris.jpeg" alt="Paris" />
+          <h3>Paris</h3>
+          <p>Starting from $899</p>
+        </div>
+        <div class="card">
+          <img src="Maldivs.jpeg" alt="Maldives" />
+          <h3>Maldives</h3>
+          <p>Starting from $699</p>
+        </div>
+        <div class="card">
+          <img src="NewYork.jpeg" alt="New York" />
+          <h3>New York</h3>
+          <p>Starting from $799</p>
+        </div>
+        <div class="card">
+          <img src="Tokyo.jpeg" alt="Tokyo" />
+          <h3>Tokyo</h3>
+          <p>Starting from $750</p>
+        </div>
+        <div class="card">
+          <img src="London.jpeg" alt="London" />
+          <h3>London</h3>
+          <p>Starting from $820</p>
+        </div>
+        <div class="card">
+          <img src="Dubai.jpeg" alt="Dubai" />
+          <h3>Dubai</h3>
+          <p>Starting from $680</p>
+        </div>
+        <div class="card">
+          <img src="Rome.jpeg" alt="Rome" />
+          <h3>Rome</h3>
+          <p>Starting from $720</p>
+        </div>
+        <div class="card">
+          <img src="Bali.jpeg" alt="Bali" />
+          <h3>Bali</h3>
+          <p>Starting from $640</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Travel Booking. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const user = JSON.parse(localStorage.getItem('registeredUser'));
+        const nameSpan = document.getElementById('displayName');
+        const userProfile = document.getElementById('userProfile');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (user && user.name) {
+          nameSpan.textContent = user.name;
+        } else {
+          userProfile.innerHTML = `
+            <p>No user is currently logged in.</p>
+           <button onclick="window.location.href='Traveling.htm'">Go to Login</button> 
+          `;
+        }
+
+        // Logout Handler
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function () {
+            localStorage.removeItem('registeredUser');
+            window.location.href = 'Traveling.htm'; // 🔄 redirect to login/register
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travel Booking</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      .booking {
+        background: #ffffff;
+        padding: 50px 20px;
+        text-align: center;
+      }
+
+      .booking h2 {
+        margin-bottom: 25px;
+        font-size: 2rem;
+        color: #0077b6;
+      }
+
+      form {
+        max-width: 500px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      input,
+      select,
+      button {
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .custom-select-wrapper {
+        position: relative;
+      }
+
+      .custom-select {
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 12px;
+        cursor: pointer;
+        position: relative;
+        text-align: left;
+      }
+
+      .selected-option {
+        font-size: 1rem;
+      }
+
+      .options {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        border: 1px solid #ccc;
+        background: white;
+        z-index: 10;
+        max-height: 250px;
+        overflow-y: auto;
+        border-top: none;
+      }
+
+      .option {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .option:hover {
+        background-color: #f0f0f0;
+      }
+
+      .option img {
+        width: 40px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #0077b6;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background-color: #005f8c;
+      }
+
+      #confirmation {
+        color: green;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="booking" class="booking">
+      <h2>Book Your Trip</h2>
+      <form id="bookingForm">
+        <input type="text" id="name" placeholder="Your Name" required />
+        <input type="email" id="email" placeholder="Your Email" required />
+
+        <div class="custom-select-wrapper">
+          <div class="custom-select" id="customSelect">
+            <div class="selected-option">Select Destination</div>
+            <div class="options">
+              <div class="option" data-value="Paris">Paris</div>
+              <div class="option" data-value="Maldives">Maldives</div>
+              <div class="option" data-value="New York">New York</div>
+              <div class="option" data-value="Tokyo">Tokyo</div>
+              <div class="option" data-value="London">London</div>
+              <div class="option" data-value="Dubai">Dubai</div>
+              <div class="option" data-value="Rome">Rome</div>
+              <div class="option" data-value="Bali">Bali</div>
+            </div>
+          </div>
+          <input type="hidden" name="destination" id="destination" required />
+        </div>
+
+        <select id="vehicle" required>
+          <option value="">Select Vehicle</option>
+          <option value="Flight">Flight</option>
+          <option value="Car">Car</option>
+          <option value="Bus">Bus</option>
+        </select>
+
+        <select id="timing" required>
+          <option value="">Select Timing</option>
+        </select>
+
+        <input type="date" id="date" required />
+        <button type="submit">Book Now</button>
+      </form>
+      <p id="confirmation"></p>
+    </section>
+
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const registeredUser = JSON.parse(
+          localStorage.getItem('registeredUser')
+        );
+        const form = document.getElementById('bookingForm');
+        const confirmation = document.getElementById('confirmation');
+
+        if (!registeredUser) {
+          form.innerHTML =
+            '<p style="color:red; font-weight:bold;">Please Register to book your trip.</p><a href="Traveling.htm" style="color:#0077b6; text-decoration:underline;">Go to Register First</a>';
+          return;
+        }
+
+        // Custom destination select
+        const customSelect = document.getElementById('customSelect');
+        const selectedOption = customSelect.querySelector('.selected-option');
+        const options = customSelect.querySelector('.options');
+        const hiddenInput = document.getElementById('destination');
+
+        selectedOption.addEventListener('click', () => {
+          options.style.display =
+            options.style.display === 'block' ? 'none' : 'block';
+        });
+
+        options.querySelectorAll('.option').forEach((option) => {
+          option.addEventListener('click', () => {
+            selectedOption.innerHTML = option.innerHTML;
+            hiddenInput.value = option.getAttribute('data-value');
+            options.style.display = 'none';
+          });
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!customSelect.contains(e.target)) {
+            options.style.display = 'none';
+          }
+        });
+
+        // Vehicle -> Timing logic
+        const vehicleSelect = document.getElementById('vehicle');
+        const timingSelect = document.getElementById('timing');
+
+        const timingOptions = {
+          Flight: ['06:00 AM', '09:00 AM', '12:00 PM', '03:00 PM', '06:00 PM'],
+          Car: ['08:00 AM', '10:00 AM', '02:00 PM', '04:00 PM'],
+          Bus: ['07:00 AM', '11:00 AM', '01:00 PM', '05:00 PM', '09:00 PM'],
+        };
+
+        vehicleSelect.addEventListener('change', () => {
+          const selectedVehicle = vehicleSelect.value;
+          timingSelect.innerHTML = '<option value="">Select Timing</option>';
+          if (timingOptions[selectedVehicle]) {
+            timingOptions[selectedVehicle].forEach((time) => {
+              const option = document.createElement('option');
+              option.value = time;
+              option.textContent = time;
+              timingSelect.appendChild(option);
+            });
+          }
+        });
+
+        // Form Submit
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const destination = document.getElementById('destination').value;
+          const vehicle = document.getElementById('vehicle').value;
+          const date = document.getElementById('date').value;
+          const timing = document.getElementById('timing').value;
+
+          localStorage.setItem(
+            'bookingDetails',
+            JSON.stringify({
+              name,
+              email,
+              destination,
+              vehicle,
+              date,
+              timing,
+            })
+          );
+
+          confirmation.textContent = 'Your trip has been booked successfully!';
+
+          setTimeout(() => {
+            window.location.href = 'main.htm';
+          }, 1500);
+
+          form.reset();
+          selectedOption.textContent = 'Select Destination';
+          timingSelect.innerHTML = '<option value="">Select Timing</option>';
+        });
+      });
+    </script>
+  </body>
+</html>

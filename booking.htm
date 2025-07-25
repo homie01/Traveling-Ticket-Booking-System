@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Booking Details</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #eef2f3;
+        padding: 40px;
+        text-align: center;
+      }
+
+      .booking-summary {
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .booking-summary h2 {
+        color: #0077b6;
+        margin-bottom: 20px;
+      }
+
+      .booking-summary p {
+        font-size: 1.1rem;
+        margin: 10px 0;
+      }
+
+      .btn-group {
+        margin-top: 25px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        background: #0077b6;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: #005f8c;
+      }
+
+      .btn.delete {
+        background-color: #dc3545;
+      }
+
+      .btn.delete:hover {
+        background-color: #b02a37;
+      }
+
+      .deleted-message {
+        color: red;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="booking-summary">
+      <h2>Your Booking Summary</h2>
+      <p><strong>Name:</strong> <span id="summaryName"></span></p>
+      <p><strong>Email:</strong> <span id="summaryEmail"></span></p>
+      <p><strong>Destination:</strong> <span id="summaryDestination"></span></p>
+      <p><strong>Vehicle:</strong> <span id="summaryVehicle"></span></p>
+      <p><strong>Travel Time:</strong> <span id="summaryTime"></span></p>
+      <p><strong>Travel Date:</strong> <span id="summaryDate"></span></p>
+
+      <div class="btn-group">
+        <a href="main.htm" class="btn">Back to Home</a>
+        <button class="btn delete" onclick="deleteBooking()">
+          Cancle Booking
+        </button>
+      </div>
+
+      <p class="deleted-message" id="deletedMsg" style="display: none">
+        Booking Cancle successfully.
+      </p>
+    </div>
+
+    <script>
+      const booking = JSON.parse(localStorage.getItem('bookingDetails'));
+
+      if (booking) {
+        document.getElementById('summaryName').textContent = booking.name;
+        document.getElementById('summaryEmail').textContent = booking.email;
+        document.getElementById('summaryDestination').textContent =
+          booking.destination;
+        document.getElementById('summaryVehicle').textContent = booking.vehicle;
+        document.getElementById('summaryTime').textContent = booking.timing;
+        document.getElementById('summaryDate').textContent = booking.date;
+      } else {
+        document.querySelector('.booking-summary').innerHTML = `
+          <h2>No booking found.</h2> 
+         <button onclick="window.location.href='book.htm'">Go to Booking</button> 
+          `;
+      }
+
+      function deleteBooking() {
+        localStorage.removeItem('bookingDetails');
+        document.querySelector('.booking-summary').innerHTML = `
+          <h2>Booking Deleted</h2>
+          <p class="deleted-message">Your booking has been removed.</p>
+          <a href="main.htm" class="btn">Back to Home</a>
+        `;
+      }
+    </script>
+  </body>
+</html>
